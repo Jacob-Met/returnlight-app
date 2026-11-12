@@ -4,6 +4,22 @@ Read the buyer's words, find the payment, refund exactly what was asked.
 
 Returnlight is a local refund desk for small online sellers. A buyer's message, the original PayPal payment and the refund decision sit on one screen. A local AI model points at the sentence that matters; a person decides the amount and sends it. Software never moves money on its own.
 
+## Try the simulated demo
+
+```sh
+python3 -m returnlight_app.returnlight_web --demo --port 5201
+```
+
+Open <http://127.0.0.1:5201/>. Needs Python 3.12+ and `pip install pypdf` (or `pip install .`); no PayPal keys and no local model.
+
+1. Click **New case**, then in the yellow badge at the bottom left click **Fill sample message** and **Fill sample capture ID**.
+2. Click **Find payment**: the simulated PayPal returns a completed $68.00 payment, the most this case can refund. Click **Use $68.00 as limit**, then **Open case**.
+3. Click **Find an AI highlight**: a fixed answer highlights the sentence where the buyer asks for the carafe refund.
+4. Click **I’ve checked the request and conditions**, choose **Refund buyer**, enter `40.00`, type the approval phrase shown, and click **Approve amount**.
+5. Tick **I checked the available refund amount**, type the `SEND` phrase shown, and click **Send refund**: the case shows "Refund completed" with a simulated PayPal refund reference.
+
+Simulated in this mode: every PayPal call (OAuth token, capture lookup, order lookup, refund, refund lookup) is answered in-process with Sandbox-shaped responses, and the AI step returns a fixed highlight instead of calling a model; a "Simulated demo: no real PayPal call" badge stays on screen. Refunds start from an existing payment, so there is no buyer approval page in this app. The real PayPal Sandbox and Ollama setup is described below. Each demo run uses a fresh scratch case folder (pass `--cases DIR` to keep one).
+
 ## Who it is for
 
 Sellers who handle refunds from an inbox: craft shops, small stores, anyone who reads a three-paragraph complaint and then has to choose between refunding everything to be safe and refunding too little.

@@ -22,6 +22,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
 
+from . import demo_mode
 from .paypal import PayPalError
 from .returnlight_model_status import model_status
 from .returnlight_remote_review import RemoteReviewer
@@ -608,9 +609,13 @@ a{color:#285b48;text-underline-offset:4px}p{margin:20px 0}
                 content = _HTML.read_text(encoding="utf-8")
                 content = content.replace("__RETURNLIGHT_TOKEN__", html.escape(self.server.token, quote=True))
                 content = content.replace("__RETURNLIGHT_NONCE__", nonce)
+                if demo_mode.ACTIVE:
+                    content = content.replace("</body>", demo_mode.badge_html(nonce) + "</body>")
                 self._reply(200, content, "text/html; charset=utf-8", nonce=nonce)
             elif path == "/assets/returnlight.css":
                 self._reply(200, _HTML.with_suffix(".css").read_text(encoding="utf-8"), "text/css; charset=utf-8")
+            elif path == "/assets/returnlight.demo.css" and demo_mode.ACTIVE:
+                self._reply(200, demo_mode.stylesheet(), "text/css; charset=utf-8")
             elif path == "/assets/returnlight.dark.css":  # generated dark-mode twin of the sheet above
                 self._reply(200, _HTML.with_suffix(".dark.css").read_text(encoding="utf-8"), "text/css; charset=utf-8")
             elif path == "/api/examples":
@@ -626,6 +631,9 @@ a{color:#285b48;text-underline-offset:4px}p{margin:20px 0}
                 except (OSError, ValueError):
                     self._error(404, "Photo unavailable. Keep the original email.", "PHOTO_UNAVAILABLE")
             elif path == "/api/model-status":
+                if demo_mode.ACTIVE:
+                    self._reply(200, {"ok": True, **demo_mode.MODEL_STATUS})
+                    return
                 self._reply(200, {"ok": True, **(self.app.remote_reviewer.status() if self.app.remote_reviewer else {"mode": "local", **model_status(self.app.model_name)})})
             elif path == "/api/cases":
                 self._reply(200, {"ok": True, "cases": self.app.list_cases()})
@@ -789,6 +797,8 @@ def main(argv=None):
     parser.add_argument("--remote-review-timeout", type=float, default=45, help="Whole remote request deadline, at most 120 seconds")
     parser.add_argument("--remote-review-proxy", help="Existing loopback HTTP CONNECT proxy for the selected HTTPS reviewer")
     parser.add_argument("--remote-review-no-auth", action="store_true", help="Explicitly select a reviewer that requires no API key")
+    parser.add_argument("--demo", action="store_true",
+                        help="Simulated demo: fake PayPal and a fixed AI answer; no credentials, no model, no network")
     parser.add_argument("--remote-review-thinking", choices=["on", "off"], help="Explicit thinking mode for a reviewer supporting chat_template_kwargs")
     args = parser.parse_args(argv)
     if bool(args.remote_review_url) != bool(args.remote_review_model):
@@ -798,10 +808,24 @@ def main(argv=None):
     remote = RemoteReviewer(args.remote_review_url, args.remote_review_model, timeout=args.remote_review_timeout,
                             proxy_url=args.remote_review_proxy, no_auth=args.remote_review_no_auth,
                             thinking=None if args.remote_review_thinking is None else args.remote_review_thinking == "on") if args.remote_review_url else None
-    cases = LocalCases(args.cases, model_name=args.model, remote_reviewer=remote)
+    demo_kwargs = {}
+    if args.demo:
+        if remote:
+            parser.error("--demo cannot be combined with a remote reviewer")
+        import tempfile
+        from . import demo_mode as _demo
+        _demo.ACTIVE = True
+        if args.cases == parser.get_default("cases"):  # a fresh scratch folder keeps each demo run repeatable
+            args.cases = Path(tempfile.mkdtemp(prefix="returnlight-demo-"))
+        os.environ["RETURNLIGHT_CAPTURE_STORE"] = str(Path(args.cases) / ".captures")
+        fake = _demo.FakePayPalGateway()
+        demo_kwargs = {"reviewer_factory": _demo.FakeReviewer, "gateway_factory": lambda: fake}
+    cases = LocalCases(args.cases, model_name=args.model, remote_reviewer=remote, **demo_kwargs)
     with LocalReturnlightServer(("127.0.0.1", args.port), cases) as server:
         print(f"Returnlight merchant UI: http://127.0.0.1:{server.server_port}/", flush=True)
-        print(("Private local case files. Remote review selected: " + remote.destination + "; buyer text requires confirmation.") if remote else "Private local case files. Model via loopback Ollama; payments via PayPal Sandbox only.",
+        if args.demo:
+            print("SIMULATED DEMO: no real PayPal call, no model. Sample capture ID: " + _demo.SAMPLE_CAPTURE_ID, flush=True)
+        print(("Private local case files. Remote review selected: " + remote.destination + "; buyer text requires confirmation.") if remote else "Simulated: payments and model answers are faked in this process." if args.demo else "Private local case files. Model via loopback Ollama; payments via PayPal Sandbox only.",
               flush=True)
         try:
             server.serve_forever(poll_interval=0.2)
