@@ -1,0 +1,56 @@
+{
+  "approved_cents": 725,
+  "capture_id": "9EG01613J6962842X",
+  "ceiling_cents": 725,
+  "complaint": "For this Sandbox test purchase, the tea strainer arrived with its handle snapped off. Please refund the full $7.25; I do not want a replacement.",
+  "currency": "USD",
+  "history": [
+    {
+      "detail": "Merchant opened review; no payment attempted.",
+      "event": "case.opened",
+      "recorded_at": "2026-11-10T21:20:58.225824+00:00",
+      "seq": 1
+    },
+    {
+      "detail": "Model evidence suggestion saved; no refund authorized.",
+      "event": "ai.reviewed",
+      "recorded_at": "2026-11-10T21:21:05.443545+00:00",
+      "seq": 2
+    },
+    {
+      "detail": "Merchant approved exactly USD 7.25.",
+      "event": "merchant.approved",
+      "recorded_at": "2026-11-10T21:24:22.061821+00:00",
+      "seq": 3
+    },
+    {
+      "detail": "One Sandbox refund attempt durably reserved for this capture; replay forbidden.",
+      "event": "refund.attempt_reserved",
+      "recorded_at": "2026-11-10T21:24:25.573685+00:00",
+      "seq": 4
+    },
+    {
+      "detail": "PayPal Sandbox response supplied 538245311U417590H; outcome not yet verified. No replay.",
+      "event": "refund.reference_observed",
+      "recorded_at": "2026-11-10T21:24:27.689831+00:00",
+      "seq": 5
+    },
+    {
+      "detail": "PayPal Sandbox returned COMPLETED for 538245311U417590H.",
+      "event": "refund.response",
+      "recorded_at": "2026-11-10T21:24:27.692393+00:00",
+      "seq": 6
+    }
+  ],
+  "id": "a47ca0d32ad4471192af0e287a2a38db",
+  "refund_id": "538245311U417590H",
+  "request_id": "51469e1d-2134-497d-af81-43ac0d025788",
+  "review": {
+    "category": "damaged",
+    "quote": "For this Sandbox test purchase, the tea strainer arrived with its handle snapped off.",
+    "summary": "The tea strainer arrived with its handle snapped off and the buyer requests a refund."
+  },
+  "schema": "returnlight.case",
+  "state": "COMPLETED",
+  "version": 1
+}

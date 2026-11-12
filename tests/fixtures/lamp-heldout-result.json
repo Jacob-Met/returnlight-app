@@ -1,0 +1,49 @@
+{
+  "seconds": 9.311584644005052,
+  "case": {
+    "approved_cents": 0,
+    "buyer_followups": [
+      {
+        "recorded_at": "2026-11-11T01:47:00.175426+00:00",
+        "superseded_review": null,
+        "text": "Hello, following up on ticket 8136 about the oak desk lamp in order RL-59302. Please disregard the refund request I sent on Monday; I wrote that before your colleague explained that the shade can be detached without rewiring anything. The lamp base and switch work perfectly, and the matching brass tray from the same parcel is also fine. I do not want to pack up either of those. My problem is confined to the glass shade: there is a crescent-shaped chip along its bottom rim, underneath the rubber retaining ring. It was hidden while everything was assembled, so my delivery photo does not show it. I only noticed it when I moved the lamp to another desk and the ring slipped down. I have kept the foam inserts and can send close-up photos with a ruler if that helps identify the size. The courier box was not visibly crushed, and nobody has dropped the lamp or tightened the ring with tools. I mentioned the warm colour of the bulb in my first email, but I have since tried our usual bulb and the colour is normal; please do not send a replacement bulb. What I would like now is the correct replacement shade at no extra charge, with no need to return the working base. If you cannot supply that part within two weeks, please contact me before arranging anything else. I am not authorising a refund or a whole-lamp exchange at this point. I will be away from Thursday until Sunday, so a parcel left outside then could get wet. Can you confirm the proposed part and dispatch date by email first? Thank you."
+      }
+    ],
+    "capture_id": "FICTIONALLAMP06",
+    "ceiling_cents": 8900,
+    "complaint": "The lamp shade is chipped. Please refund the lamp.",
+    "currency": "USD",
+    "history": [
+      {
+        "detail": "Merchant opened review; no payment attempted.",
+        "event": "case.opened",
+        "recorded_at": "2026-11-11T01:47:00.173871+00:00",
+        "seq": 1
+      },
+      {
+        "detail": "Merchant copied buyer follow-up 1. Original words retained; a fresh evidence review and approval are required.",
+        "event": "buyer.followup_recorded",
+        "recorded_at": "2026-11-11T01:47:00.175426+00:00",
+        "seq": 2
+      },
+      {
+        "seq": 3,
+        "event": "ai.reviewed",
+        "detail": "Model evidence suggestion saved; no refund authorized.",
+        "recorded_at": "2026-11-11T01:47:09.485927+00:00"
+      }
+    ],
+    "id": "d82a9e53918d4e0bb3349b69904089b3",
+    "refund_id": null,
+    "request_id": null,
+    "review": {
+      "kind": "source_selection",
+      "quote": "What I would like now is the correct replacement shade at no extra charge, with no need to return the working base. If you cannot supply that part within two weeks, please contact me before arranging anything else.",
+      "context": "What I would like now is the correct replacement shade at no extra charge, with no need to return the working base. If you cannot supply that part within two weeks, please contact me before arranging anything else."
+    },
+    "schema": "returnlight.case",
+    "state": "REVIEWED",
+    "version": 1
+  },
+  "scope": "Actual normal review path on new unseen peer message after exact-quote prompt frozen; fictional payment"
+}

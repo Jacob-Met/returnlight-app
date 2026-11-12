@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "returnlight-app"
+version = "0.1.0"
+description = "A merchant refund desk: AI highlights the buyer's request, a person approves, PayPal Sandbox refunds."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+dependencies = ["pypdf==7.0.1"]
+
+[project.scripts]
+returnlight = "returnlight_app.returnlight_web:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["returnlight_app"]
+
+[tool.setuptools.package-data]
+returnlight_app = ["*.html", "*.css", "*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
