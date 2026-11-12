@@ -94,3 +94,7 @@ Cases are plain JSON files on your machine. Credentials stay in the server's env
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Light and dark mode
+
+The interface follows the system colour scheme, and the round button in the bottom-right corner switches between light and dark. The second colour sheet is generated from the first with `tools/retheme.py`, so the two always share the same layout.

@@ -611,6 +611,8 @@ a{color:#285b48;text-underline-offset:4px}p{margin:20px 0}
                 self._reply(200, content, "text/html; charset=utf-8", nonce=nonce)
             elif path == "/assets/returnlight.css":
                 self._reply(200, _HTML.with_suffix(".css").read_text(encoding="utf-8"), "text/css; charset=utf-8")
+            elif path == "/assets/returnlight.dark.css":  # generated dark-mode twin of the sheet above
+                self._reply(200, _HTML.with_suffix(".dark.css").read_text(encoding="utf-8"), "text/css; charset=utf-8")
             elif path == "/api/examples":
                 example = json.loads(_HTML.with_name("returnlight_example.json").read_text(encoding="utf-8"))
                 self._reply(200, {"ok": True, "examples": [{"key": "completed-sandbox-tea-strainer", "title": "Tea strainer · refunded", "example": True, "case": example}]})
