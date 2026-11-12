@@ -21,7 +21,7 @@ dev = ["pytest>=8"]
 packages = ["returnlight_app"]
 
 [tool.setuptools.package-data]
-returnlight_app = ["*.html", "*.css", "*.json"]
+returnlight_app = ["*.html", "*.css", "*.js", "*.json", "returns_assets/*.png"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -23,6 +23,7 @@ from pathlib import Path
 from urllib.parse import urlsplit, parse_qs
 
 from . import demo_mode
+from . import returns as returns_desk
 from .paypal import PayPalError
 from .returnlight_model_status import model_status
 from .returnlight_remote_review import RemoteReviewer
@@ -604,7 +605,9 @@ a{color:#285b48;text-underline-offset:4px}p{margin:20px 0}
             return
         path = urlsplit(self.path).path
         try:
-            if path == "/":
+            if returns_desk.handles(path):
+                returns_desk.serve_get(self, path, self.server.token)
+            elif path == "/":
                 nonce = secrets.token_urlsafe(18)
                 content = _HTML.read_text(encoding="utf-8")
                 content = content.replace("__RETURNLIGHT_TOKEN__", html.escape(self.server.token, quote=True))
@@ -726,6 +729,8 @@ a{color:#285b48;text-underline-offset:4px}p{margin:20px 0}
         path = urlsplit(self.path).path
         # Only email import accepts a larger envelope; case mutations retain their limit.
         limit = 4 * ((MAX_EMAIL_BYTES + 2) // 3) + 128 if path == "/api/intake/email" else _MAX_JSON_BYTES
+        if path.startswith("/api/returns"):
+            limit = 2 * (4 * ((MAX_PHOTO_BYTES + 2) // 3) + 2048)
         if (match := _CASE_ROUTE.fullmatch(path)) and match.group(2) in {"reply-document", "document-source"}:
             limit = 4 * ((MAX_PHOTO_BYTES + 2) // 3) + 2048
         if length < 0 or length > limit:
@@ -736,7 +741,9 @@ a{color:#285b48;text-underline-offset:4px}p{margin:20px 0}
             if type(payload) is not dict:
                 raise CaseError("Request must be a JSON object.")
             path = urlsplit(self.path).path
-            if path == "/api/intake/email":
+            if path.startswith("/api/returns"):
+                self._reply(200, {"ok": True, **returns_desk.desk_for(self.app).post(path, payload)})
+            elif path == "/api/intake/email":
                 self._reply(200, {"ok": True, **self.app.import_email(base64.b64decode(payload.get("email_base64", ""), validate=True))})
             elif path == "/api/cases":
                 result = self.app.create(payload)

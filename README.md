@@ -20,6 +20,12 @@ Open <http://127.0.0.1:5201/>. Needs Python 3.12+ and `pip install pypdf` (or `p
 
 Simulated in this mode: every PayPal call (OAuth token, capture lookup, order lookup, refund, refund lookup) is answered in-process with Sandbox-shaped responses, and the AI step returns a fixed highlight instead of calling a model; a "Simulated demo: no real PayPal call" badge stays on screen. Refunds start from an existing payment, so there is no buyer approval page in this app. The real PayPal Sandbox and Ollama setup is described below. Each demo run uses a fresh scratch case folder (pass `--cases DIR` to keep one).
 
+## Returns desk (start a return from a photo)
+
+Open **Returns** in the top bar (or `/returns`). Give it a photo or short video of the item and a photo of the receipt or order email. A local vision model (`qwen2.5vl:3b` through Ollama on loopback) reads the receipt and describes the item; the app shows your photo with what it noticed marked on it, the matching receipt line, the return window and the refund amount as one card. Correct it by typing or speaking ("it was opened but unused", "wrong size, not damaged"). The refund is sent through the normal Returnlight case flow and PayPal gateway, and only after a sheet and a press-and-hold on the amount. The home list marks each return refunded, waiting for the parcel, or needs a decision.
+
+In the simulated demo, open Returns, tap **Start a return**, then **Try with the sample photos** (no model is called; fixed answers are used). Try "Wrong size, not damaged", then **Refund**, and hold the button.
+
 ## Who it is for
 
 Sellers who handle refunds from an inbox: craft shops, small stores, anyone who reads a three-paragraph complaint and then has to choose between refunding everything to be safe and refunding too little.
